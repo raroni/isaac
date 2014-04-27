@@ -1,0 +1,6 @@
+name: isaac
+description: A sample application
+dependencies:
+  dash:
+    path: ../dash
+  unittest: any
