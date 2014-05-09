@@ -123,15 +123,25 @@ class CollisionDetection extends Dash.EntityObserverProcessor {
     var circlePositionRelativeToPolygon = circlePositionAspect.position - polygonPositionAspect.position;
     
     var polygonCollider = polygonEntity.getAspect(PolygonCollider);
-    var closestPointOnPolygon = polygonCollider.polygon.getClosestPoint(circlePositionRelativeToPolygon);
+    var polygon = polygonCollider.polygon;
     
-    var difference = circlePositionRelativeToPolygon-closestPointOnPolygon;
-    var distance = difference.length;
+    var shortestSquaredDistance = double.MAX_FINITE;
+    var closestLineIndex;
+    
+    for(var i=0; polygon.lines.length>i; i++) {
+      var line = polygon.lines[i];
+      var squaredDistance = line.getSquaredDistanceToPoint(circlePositionRelativeToPolygon);
+      if(squaredDistance < shortestSquaredDistance) {
+        shortestSquaredDistance = squaredDistance;
+        closestLineIndex = i; 
+      }
+    }
     
     var circleCollider = circleEntity.getAspect(CircleCollider);
-    if(distance < circleCollider.radius) {
-      difference.normalize();
-      var separation = difference * (circleCollider.radius-distance);
+    var distance = Math.sqrt(shortestSquaredDistance);
+    if(distance <= circleCollider.radius) {
+      var normal = polygon.normals[closestLineIndex];
+      var separation = normal * (circleCollider.radius-distance);
       eventManager.emit(new Collision(circleEntity, polygonEntity, separation));
     }
   }

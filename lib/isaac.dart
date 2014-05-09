@@ -1,5 +1,7 @@
 library isaac;
 
+import 'dart:math' as Math;
+
 import 'dart:collection' as Collection;
 
 import 'package:dash/dash.dart' as Dash;
