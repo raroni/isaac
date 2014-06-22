@@ -15,3 +15,4 @@ part 'src/polygon_collider.dart';
 part 'src/position_aspect.dart';
 part 'src/velocity_aspect.dart';
 part 'src/pair_cache.dart';
+part 'src/processor.dart';
