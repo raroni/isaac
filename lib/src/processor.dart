@@ -2,8 +2,14 @@ part of isaac;
 
 class Processor extends Dash.Processor {
   Movement movement = new Movement();
-  CollisionDetection collisionDetection = new CollisionDetection();
+  Index index = new Index();
+  CollisionDetection collisionDetection;
   CollisionResolution collisionResolution = new CollisionResolution();
+  RequestHandling requestHandling = new RequestHandling();
+  
+  Processor() {
+    collisionDetection = new CollisionDetection(index);
+  }
   
   void onProcessorInitialized() {
     // setup some registry that maintains registry of colliders 
@@ -11,6 +17,9 @@ class Processor extends Dash.Processor {
     // registry to do their job
     // That way, RequestHandling does not have to maintain an identical
     // copy of the list
+    
+    index.eventManager = eventManager;
+    index.initialize();
     
     movement.eventManager = eventManager;
     movement.initialize();

@@ -1,51 +1,46 @@
 part of isaac;
 
-class CollisionDetection extends Dash.EntityObserverProcessor {
-  List<Dash.Entity> staticCircleEntities = new List<Dash.Entity>();
-  List<Dash.Entity> dynamicCircleEntities = new List<Dash.Entity>();
-  List<Dash.Entity> staticPolygonEntities = new List<Dash.Entity>();
-  List<Dash.Entity> dynamicPolygonEntities = new List<Dash.Entity>();
+class CollisionDetection extends Dash.Processor {
   PairCache<Dash.Entity> pairCache = new PairCache<Dash.Entity>();
+  Index index;
   
-  bool match(Dash.Entity entity) {
-    return entity.has(CircleCollider) || entity.has(PolygonCollider);
-  }
+  CollisionDetection(Index this.index);
   
-  void onEntityObserverProcessorInitialized() {
+  void onProcessorInitialized() {
     eventSubscriptionManager.add(Dash.Update, receiveUpdate);
   }
   
   void receiveUpdate(Dash.Update update) {
-    for(var entity1 in dynamicCircleEntities) {
-      for(var entity2 in dynamicCircleEntities) {
+    for(var entity1 in index.dynamicCircleEntities) {
+      for(var entity2 in index.dynamicCircleEntities) {
         if(entity1 != entity2 && !pairCache.contains(entity1, entity2)) {
           testCircles(entity1, entity2);
           pairCache.add(entity1, entity2);
         }
       }
-      for(var entity2 in staticCircleEntities) {
+      for(var entity2 in index.staticCircleEntities) {
         testCircles(entity1, entity2);
       }
-      for(var entity2 in dynamicPolygonEntities) {
+      for(var entity2 in index.dynamicPolygonEntities) {
         testCirclePolygon(entity1, entity2);
       }
-      for(var entity2 in staticPolygonEntities) {
+      for(var entity2 in index.staticPolygonEntities) {
         testCirclePolygon(entity1, entity2);
       }
     }
     pairCache.clear();
     
-    for(var entity1 in dynamicPolygonEntities) {
-      for(var entity2 in dynamicPolygonEntities) {
+    for(var entity1 in index.dynamicPolygonEntities) {
+      for(var entity2 in index.dynamicPolygonEntities) {
         if(entity1 != entity2 && !pairCache.contains(entity1, entity2)) {
           testPolygons(entity1, entity2);
           pairCache.add(entity1, entity2);
         }
       }
-      for(var entity2 in staticPolygonEntities) {
+      for(var entity2 in index.staticPolygonEntities) {
         testPolygons(entity1, entity2);
       }
-      for(var entity2 in staticCircleEntities) {
+      for(var entity2 in index.staticCircleEntities) {
         testCirclePolygon(entity2, entity1);
       }
     }
@@ -143,30 +138,6 @@ class CollisionDetection extends Dash.EntityObserverProcessor {
       var normal = polygon.normals[closestLineIndex];
       var separation = normal * (circleCollider.radius-distance);
       eventManager.emit(new Collision(circleEntity, polygonEntity, separation));
-    }
-  }
-  
-  void onAddition(Dash.Entity entity) {
-    getList(entity).add(entity);
-  }
-  
-  void onRemoval(Dash.Entity entity) {
-    getList(entity).remove(entity);
-  }
-  
-  List<Dash.Entity> getList(Dash.Entity entity) {
-    if(entity.has(PolygonCollider)) {
-      if(entity.has(VelocityAspect)) {
-        return dynamicPolygonEntities;
-      } else {
-        return staticPolygonEntities;
-      }
-    } else {
-      if(entity.has(VelocityAspect)) {
-        return dynamicCircleEntities;
-      } else {
-        return staticCircleEntities;
-      } 
     }
   }
 }
