@@ -16,3 +16,5 @@ part 'src/position_aspect.dart';
 part 'src/velocity_aspect.dart';
 part 'src/pair_cache.dart';
 part 'src/processor.dart';
+part 'src/response.dart';
+part 'src/request.dart';
