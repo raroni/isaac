@@ -6,10 +6,6 @@ class CollisionDetection extends Dash.Processor {
   
   CollisionDetection(Index this.index);
   
-  void onProcessorInitialized() {
-    eventSubscriptionManager.add(Dash.Update, receiveUpdate);
-  }
-  
   void receiveUpdate(Dash.Update update) {
     for(var entity1 in index.dynamicCircleEntities) {
       for(var entity2 in index.dynamicCircleEntities) {

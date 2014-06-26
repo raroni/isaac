@@ -5,7 +5,6 @@ class CollisionResolution extends Dash.Processor {
   
   void onProcessorInitialized() {
     eventSubscriptionManager.add(Collision, receiveCollision);
-    eventSubscriptionManager.add(Dash.Update, receiveUpdate);
   }
   
   void receiveCollision(Collision collision) {

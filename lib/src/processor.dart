@@ -5,19 +5,14 @@ class Processor extends Dash.Processor {
   Index index = new Index();
   CollisionDetection collisionDetection;
   CollisionResolution collisionResolution = new CollisionResolution();
-  RequestHandling requestHandling = new RequestHandling();
+  RequestHandling requestHandling;
   
   Processor() {
     collisionDetection = new CollisionDetection(index);
+    requestHandling = new RequestHandling(index);
   }
   
   void onProcessorInitialized() {
-    // setup some registry that maintains registry of colliders 
-    // in turn, CollisionDetection and RequestHandling can use this
-    // registry to do their job
-    // That way, RequestHandling does not have to maintain an identical
-    // copy of the list
-    
     index.eventManager = eventManager;
     index.initialize();
     
@@ -29,11 +24,17 @@ class Processor extends Dash.Processor {
     
     collisionResolution.eventManager = eventManager;
     collisionResolution.initialize();
+    
+    requestHandling.eventManager = eventManager;
+    requestHandling.initialize();
+    
+    eventSubscriptionManager.add(Dash.Update, update);
   }
   
   void update(Dash.Update update) {
-    movement.receiveUpdate(update);
+    movement.update(update);
     collisionDetection.receiveUpdate(update);
     collisionResolution.receiveUpdate(update);
+    requestHandling.update(update);
   }
 }
